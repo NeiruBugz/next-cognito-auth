@@ -1,8 +1,9 @@
 "use client";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Auth } from "aws-amplify";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import AmplifyProvider from "../provider";
 
 const signUpSchema = z.object({
@@ -10,49 +11,53 @@ const signUpSchema = z.object({
   password: z.string().min(8, "Password is required"),
 });
 
-
 type LoginFields = z.infer<typeof signUpSchema>;
 
 export default function Page() {
-  const methods = useForm<LoginFields>();
+  const { register, handleSubmit, trigger } = useForm<LoginFields>({
+    resolver: zodResolver(signUpSchema),
+  });
+  const router = useRouter();
 
   const onSubmit = async ({ username, password }: LoginFields) => {
-    const isValid = await methods.trigger();
+    const isValid = await trigger();
     if (isValid) {
       try {
-        const { user } = await Auth.signIn({
-          username,
-          password,
-        });
+        const user = await Auth.signIn(username, password);
         console.log(user);
-        redirect("/");
+        user && router.push("/");
       } catch (error) {
         console.log(error);
       }
     }
   };
+
+  const onError = (error: any) => {
+    console.log(error);
+  };
+
   return (
     <AmplifyProvider>
-      <main className="container mx-auto h-screen">
-        <form
-          className="flex flex-col gap-2"
-          onSubmit={methods.handleSubmit(onSubmit)}
-        >
+      <div
+        className="container mx-auto h-screen"
+        onSubmit={handleSubmit(onSubmit, onError)}
+      >
+        <form className="flex flex-col gap-2">
           <input
             type="text"
             id="username"
             placeholder="username"
-            {...methods.register("username")}
+            {...register("username")}
           />
           <input
             type="password"
             id="password"
             placeholder="password"
-            {...methods.register("password")}
+            {...register("password")}
           />
-          <input type="submit" value="Submit" />
+          <input type="submit" />
         </form>
-      </main>
+      </div>
     </AmplifyProvider>
   );
 }
