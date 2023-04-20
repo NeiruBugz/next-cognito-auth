@@ -6,6 +6,9 @@ import z from "zod";
 import AmplifyProvider from "../provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const signUpSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -57,7 +60,7 @@ export default function Page() {
   const confirmCode = async ({ confirmationCode }: ConfirmationFields) => {
     try {
       await Auth.confirmSignUp(username, confirmationCode);
-      router.push('/auth/login');
+      router.push("/auth/login");
     } catch (error) {
       console.error(error);
     }
@@ -66,43 +69,63 @@ export default function Page() {
     <AmplifyProvider>
       {isConfirmation ? (
         <div
-          className="container mx-auto h-screen"
+          className="container mx-auto h-screen p-8 flex items-center"
           onSubmit={handleSubmit(confirmCode)}
         >
           <form className="flex flex-col gap-2">
-            <input
-              type="text"
-              id="confirmationCode"
-              {...register("confirmationCode")}
-            />
-            <input type="submit" />
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label>Username</Label>
+              <Input type="text" id="username" />
+            </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label>Confirmation code</Label>
+              <Input
+                type="text"
+                id="confirmationCode"
+                {...register("confirmationCode")}
+              />
+            </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Button>Submit</Button>
+            </div>
           </form>
         </div>
       ) : (
         <div
-          className="container mx-auto h-screen"
+          className="container mx-auto h-screen flex justify-center items-center"
           onSubmit={methods.handleSubmit(onSubmit)}
         >
           <form className="flex flex-col gap-2">
-            <input
-              type="email"
-              id="email"
-              placeholder="email"
-              {...methods.register("email")}
-            />
-            <input
-              type="text"
-              id="username"
-              placeholder="username"
-              {...methods.register("username")}
-            />
-            <input
-              type="password"
-              id="password"
-              placeholder="password"
-              {...methods.register("password")}
-            />
-            <input type="submit" value="Submit" />
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                id="email"
+                placeholder="Email"
+                {...methods.register("email")}
+              />
+            </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label>Username</Label>
+              <Input
+                type="text"
+                id="username"
+                placeholder="Username"
+                {...methods.register("username")}
+              />
+            </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label>Password</Label>
+              <Input
+                type="password"
+                id="password"
+                placeholder="Password"
+                {...methods.register("password")}
+              />
+            </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Button>Submit</Button>
+            </div>
           </form>
         </div>
       )}

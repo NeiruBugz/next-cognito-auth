@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AmplifyProvider from "../provider";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const signUpSchema = z.object({
   username: z.string().min(6, "Username is required"),
@@ -39,23 +42,31 @@ export default function Page() {
   return (
     <AmplifyProvider>
       <div
-        className="container mx-auto h-screen"
+        className="container mx-auto h-screen flex justify-center items-center"
         onSubmit={handleSubmit(onSubmit, onError)}
       >
         <form className="flex flex-col gap-2">
-          <input
-            type="text"
-            id="username"
-            placeholder="username"
-            {...register("username")}
-          />
-          <input
-            type="password"
-            id="password"
-            placeholder="password"
-            {...register("password")}
-          />
-          <input type="submit" />
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label>Username</Label>
+            <Input
+              type="text"
+              id="username"
+              placeholder="Username"
+              {...register("username")}
+            />
+          </div>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label>Password</Label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Password"
+              {...register("password")}
+            />
+          </div>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Button>Submit</Button>
+          </div>
         </form>
       </div>
     </AmplifyProvider>
